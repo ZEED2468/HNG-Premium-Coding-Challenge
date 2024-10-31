@@ -51,12 +51,7 @@ The Task Management API is a scalable RESTful API that enables users to manage t
      DATABASE_NAME=<your-database-name>
      ```
 
-4. **Run Database Migrations** (if applicable):
-   ```bash
-   npm run typeorm:migration:run
-   ```
-
-5. **Start the Server**:
+4. **Start the Server**:
    ```bash
    npm run start
    ```
@@ -64,88 +59,6 @@ The Task Management API is a scalable RESTful API that enables users to manage t
 
 ---
 
-## API Documentation
-
-Comprehensive API documentation is available via Swagger:
-
-- **[http://localhost:3000/api/docs](http://localhost:3000/api/docs)**
-
-This documentation covers all endpoints, required parameters, and expected responses.
-
----
-
-## Endpoints
-
-### User Authentication
-
-- **Register a New User**
-  - **POST** `/users/register`
-  - **Request Body**:
-    ```json
-    {
-      "email": "user@example.com",
-      "username": "user123",
-      "password": "password123"
-    }
-    ```
-  - **Response**: JSON object with user details.
-
-- **User Login**
-  - **POST** `/users/login`
-  - **Request Body**:
-    ```json
-    {
-      "email": "user@example.com",
-      "password": "password123"
-    }
-    ```
-  - **Response**: JWT token for authenticated access.
-
-- **JWT Authentication**: Add the generated token to the `Authorization` header as `Bearer <token>` to access protected routes.
-
-### Task Management
-
-- **Create a Task**
-  - **POST** `/tasks`
-  - **Request Body** (authenticated):
-    ```json
-    {
-      "title": "Finish project report",
-      "description": "Complete and submit the report",
-      "dueDate": "2024-12-31",
-      "status": "pending",
-      "priority": "medium"
-    }
-    ```
-
-- **Retrieve All Tasks (with Pagination and Filtering)**
-  - **GET** `/tasks`
-  - **Optional Query Parameters**:
-    - `status`, `priority`, `tags`, `page`, `limit`
-  - **Example**: `/tasks?status=pending&priority=high&page=1&limit=10`
-
-- **Retrieve Task by ID**
-  - **GET** `/tasks/:id`
-
-- **Update Task by ID**
-  - **PUT** `/tasks/:id`
-
-- **Delete Task by ID**
-  - **DELETE** `/tasks/:id`
-
----
-
-## Error Handling
-
-The API provides structured error messages and standard HTTP status codes:
-
-- **400**: Bad request or validation error.
-- **401**: Unauthorized (authentication error).
-- **403**: Forbidden (access error).
-- **404**: Not found.
-- **500**: Internal server error.
-
----
 
 ## Project Structure
 
@@ -204,10 +117,3 @@ To ensure efficient handling of large datasets:
 5. **Submit a pull request** for review.
 
 ---
-
-
-This project is open-source and available under the [MIT License](LICENSE).
-
----
-
-This README is structured to accommodate the entire challenge requirements, including setup, features, API usage, error handling, and bonus features. Let me know if you need further customizations!
