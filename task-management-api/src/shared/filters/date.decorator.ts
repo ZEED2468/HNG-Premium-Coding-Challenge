@@ -9,7 +9,7 @@ export function IsFutureDate(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(value: any, args: ValidationArguments) {
-          return value instanceof Date && value > new Date();
+          return value instanceof Date && !isNaN(value.getTime()) && value > new Date();
         },
         defaultMessage(args: ValidationArguments) {
           return `${args.property} must be a future date`;
