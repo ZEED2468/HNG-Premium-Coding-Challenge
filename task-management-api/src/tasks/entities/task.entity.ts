@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from "../../shared/base-entity";
 import { User } from '../../users/entities/user.entity';
 
@@ -19,7 +19,8 @@ export class Task extends BaseEntity {
   @Column({ default: 'low' })
   priority: string;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.tasks, { eager: true })
+  @JoinColumn({ name: 'createdById' })
   createdBy: User;
 
   @Column({ nullable: true })

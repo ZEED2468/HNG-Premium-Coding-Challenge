@@ -1,5 +1,7 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from "../../shared/base-entity";
+import { Task } from '../../tasks/entities/task.entity';
+
 
 @Entity()
 export class User extends BaseEntity {
@@ -11,4 +13,7 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Task, (task) => task.createdBy)
+  tasks: Task[];
 }
