@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Task } from './entities/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { GetTasksQueryDto } from './dto/get-tasks-query.dto';
 import { CustomHttpException } from '../shared/filters/custom-http-exception';
 import { formatResponse } from '../shared/utils/response.util';
 import * as SYS_MSG from "../shared/constants/syatem-messages";
@@ -18,15 +19,8 @@ export class TasksService {
   // Utility function to format the task response
   private formatTaskResponse(task: any): any {
     if (task) {
-      // Ensure the tags field is formatted as a single-line array
-      if (Array.isArray(task.tags)) {
-        task.tags = task.tags.map((tag: string) => tag.trim()); // Remove excessive spaces
-      }
-  
-      // Sanitize the createdBy field to only include the id
-      if (task.createdBy && task.createdBy.id) {
-        task.createdBy = { id: task.createdBy.id };
-      }
+      if (Array.isArray(task.tags)) {task.tags = task.tags.map((tag: string) => tag.trim())}
+        if (task.createdBy && task.createdBy.id) { task.createdBy = { id: task.createdBy.id }}
     }
     return task;
   }
@@ -47,16 +41,35 @@ export class TasksService {
     }
   }
 
-  async findAll() {
+  async findAllTasks(userId: string, query: GetTasksQueryDto) {
+    const { page, limit, status, priority, tags } = query;
+    const offset = (page - 1) * limit;
+
+  
+    const queryBuilder = this.tasksRepository.createQueryBuilder('task')
+      .where('task.createdBy.id = :userId', { userId });
+
+      if (status) queryBuilder.andWhere('task.status = :status', { status });
+      if (priority) queryBuilder.andWhere('task.priority = :priority', { priority });
+      if (tags && tags.length > 0) queryBuilder.andWhere('task.tags && ARRAY[:...tags]', { tags });
+  
+      queryBuilder.skip(offset).take(limit);
+
     try {
-      const tasks = await this.tasksRepository.find();
+      const [tasks, total] = await queryBuilder.getManyAndCount();
       const formattedTasks = tasks.map(task => this.formatTaskResponse(task));
-      return formatResponse(HttpStatus.OK, SYS_MSG.TASK_RETRIEVED_SUCCESSFULLY, formattedTasks);
+      return formatResponse(HttpStatus.OK, SYS_MSG.TASK_RETRIEVED_SUCCESSFULLY, {
+        tasks: formattedTasks,
+        total,
+        page,
+        limit,
+      });
     } catch (error) {
+      console.error('Error fetching paginated tasks:', error);
       throw new CustomHttpException(SYS_MSG.GENERAL_ERROR_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  
+
 
   async findOne(id: string) {
     const task = await this.tasksRepository.findOne({ where: { id } });

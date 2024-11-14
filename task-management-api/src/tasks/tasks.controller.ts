@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Put, Delete, Param, UseGuards, Body, Req, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Query, UseGuards, Body, Req, HttpCode, HttpStatus } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { GetTasksQueryDto } from './dto/get-tasks-query.dto';
 import { JwtAuthGuard } from '../users/auth/jwt-auth-guard';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthenticatedRequest } from '../users/types/express-request.interface';
@@ -10,7 +11,7 @@ import { AuthenticatedRequest } from '../users/types/express-request.interface';
 @Controller('tasks')
 @UseGuards(JwtAuthGuard)
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(private readonly tasksService: TasksService) { }
 
   @Post()
   @ApiOperation({ summary: 'Create a new task' })
@@ -23,10 +24,14 @@ export class TasksController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Retrieve all tasks' })
+  @ApiOperation({ summary: 'Retrieve all tasks with pagination and filtering' })
   @ApiResponse({ status: 200, description: 'List of all tasks.' })
-  async findAll() {
-    return this.tasksService.findAll();
+  async findAll(
+    @Req() req: AuthenticatedRequest,
+    @Query() query: GetTasksQueryDto,
+  ) {
+    const userId = req.user?.userId;
+    return this.tasksService.findAllTasks(userId, query);
   }
 
   @Get(':id')
