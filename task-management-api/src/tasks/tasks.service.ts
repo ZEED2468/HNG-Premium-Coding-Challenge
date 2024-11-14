@@ -110,7 +110,7 @@ export class TasksService {
 
     try {
       await this.tasksRepository.delete(id);
-      return formatResponse(HttpStatus.NO_CONTENT, SYS_MSG.TASK_DELETED_SUCCESSFULLY, null);
+      return formatResponse(HttpStatus.OK, SYS_MSG.TASK_DELETED_SUCCESSFULLY, { message: 'Task deleted successfully.'});
     } catch (error) {
       throw new CustomHttpException(SYS_MSG.GENERAL_ERROR_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR);
     }
