@@ -64,16 +64,16 @@ export class TasksController {
   }
 
   @Post(':id/share')
-@ApiOperation({ summary: 'Share a task via email' })
-@ApiResponse({ status: 200, description: 'Task has been shared successfully.' })
-@ApiResponse({ status: 404, description: 'Task not found.' })
-async shareTask(
-  @Param('id') taskId: string,
-  @Body() shareTaskDto: ShareTaskDto,
-  @Req() req: AuthenticatedRequest,
-) {
-  const userId = req.user?.userId;
-  return this.tasksService.shareTask(taskId, shareTaskDto, userId);
-}
+  @ApiOperation({ summary: 'Share a task via email' })
+  @ApiResponse({ status: 200, description: 'Task has been shared successfully.' })
+  @ApiResponse({ status: 404, description: 'Task not found.' })
+  async shareTask(
+    @Param('id') taskId: string,
+    @Body() shareTaskDto: ShareTaskDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user?.userId;
+    return this.tasksService.shareTask(taskId, shareTaskDto, userId);
+  }
 
 }

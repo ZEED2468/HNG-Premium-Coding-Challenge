@@ -59,6 +59,7 @@ export class TasksService {
     // Attempt to retrieve cached data
     const cachedData = await this.cacheManager.get(cacheKey);
     if (cachedData) {
+      console.log('Cache Hit:', cachedData);
       return cachedData; // Return cached response if it exists
     }
 

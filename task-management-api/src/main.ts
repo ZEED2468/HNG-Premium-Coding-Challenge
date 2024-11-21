@@ -5,33 +5,34 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'log', 'debug'], 
+    logger: ['error', 'warn', 'log', 'debug'],
   });
- app.enableCors();
+  app.enableCors();
   app.setGlobalPrefix('api');
+  const port = process.env.PORT;
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
-    transform: true, 
+    transform: true,
     transformOptions: {
-      enableImplicitConversion: true, 
+      enableImplicitConversion: true,
     },
   }));
-  
-  
+
+
   const config = new DocumentBuilder()
     .setTitle('Task Management API')
     .setDescription('API for managing tasks')
     .setVersion('1.0')
-    .addBearerAuth() 
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document); 
+  SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(3000);
-  console.log('Task Management API is listening on port 3000');
+  await app.listen(port);
+  console.log(`Task Management API is listening on prt ${port}`);
 }
 
 bootstrap();

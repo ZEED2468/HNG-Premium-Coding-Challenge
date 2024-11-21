@@ -7,7 +7,7 @@ config(); // Load .env variables if necessary
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DATABASE_HOST || 'localhost',
+  host: process.env.DATABASE_HOST,
   port: parseInt(process.env.DATABASE_PORT || '5432', 10),
   username: process.env.DATABASE_USER || 'your_db_username',
   password: process.env.DATABASE_PASSWORD || 'your_db_password',
