@@ -6,6 +6,8 @@ import { GetTasksQueryDto } from './dto/get-tasks-query.dto';
 import { JwtAuthGuard } from '../users/auth/jwt-auth-guard';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthenticatedRequest } from '../users/types/express-request.interface';
+import { ShareTaskDto } from './dto/share-task.dto';
+
 
 @ApiTags('tasks')
 @Controller('tasks')
@@ -60,4 +62,18 @@ export class TasksController {
     const userId = req.user?.userId;
     return this.tasksService.remove(id, userId);
   }
+
+  @Post(':id/share')
+@ApiOperation({ summary: 'Share a task via email' })
+@ApiResponse({ status: 200, description: 'Task has been shared successfully.' })
+@ApiResponse({ status: 404, description: 'Task not found.' })
+async shareTask(
+  @Param('id') taskId: string,
+  @Body() shareTaskDto: ShareTaskDto,
+  @Req() req: AuthenticatedRequest,
+) {
+  const userId = req.user?.userId;
+  return this.tasksService.shareTask(taskId, shareTaskDto, userId);
+}
+
 }
