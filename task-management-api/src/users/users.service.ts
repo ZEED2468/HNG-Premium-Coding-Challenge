@@ -8,7 +8,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import * as SYS_MSG from "../shared/constants/syatem-messages";
+import * as SYS_MSG from "../shared/constants/system-messages";
 import { CustomHttpException } from '../shared/filters/custom-http-exception';
 import { formatResponse } from '../shared/utils/response.util';
 

@@ -19,4 +19,8 @@ export const TASK_DELETED_SUCCESSFULLY = 'Task deleted successfully';
 export const TASK_NOT_FOUND = 'Task not found';
 export const FAILED_TO_CREATE_TASK = 'Failed to create task';
 export const UNAUTHORIZED_TASK_ACCESS = 'Unauthorized access to task';
-export const GENERAL_ERROR_MESSAGE = 'An error occurred. Please try again later.';
+export const GENERAL_ERROR_MESSAGE = 'An error occurred. Please try again later';
+export const TASK_SHARED_SUCCESSFULLY = 'Task shared successfully';
+export const TASK_SHARE_FAILED = 'Failed to share the task';
+export const TASK_LIST_RETRIEVED = 'Task list retrieved successfully';
+

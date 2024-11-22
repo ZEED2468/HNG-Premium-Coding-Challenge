@@ -7,9 +7,7 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { GetTasksQueryDto } from './dto/get-tasks-query.dto';
 import { CustomHttpException } from '../shared/filters/custom-http-exception';
 import { formatResponse } from '../shared/utils/response.util';
-import * as SYS_MSG from "../shared/constants/syatem-messages";
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
+import * as SYS_MSG from "../shared/constants/system-messages";
 import { ShareTaskDto } from './dto/share-task.dto';
 import { EmailService } from '../shared/email/email.service'
 
@@ -20,7 +18,6 @@ export class TasksService {
   constructor(
     @InjectRepository(Task)
     private readonly tasksRepository: Repository<Task>,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly emailService: EmailService,
   ) {}
 
@@ -54,25 +51,17 @@ export class TasksService {
   async findAllTasks(userId: string, query: GetTasksQueryDto) {
     const { page, limit, status, priority, tags } = query;
     const offset = (page - 1) * limit;
-    const cacheKey = `tasks_${userId}_${page}_${limit}_${status}_${priority}_${tags?.join(',') || ''}`;
-
-    // Attempt to retrieve cached data
-    const cachedData = await this.cacheManager.get(cacheKey);
-    if (cachedData) {
-      console.log('Cache Hit:', cachedData);
-      return cachedData; // Return cached response if it exists
-    }
-
+  
     // If cache miss, proceed with database query
     const queryBuilder = this.tasksRepository.createQueryBuilder('task')
       .where('task.createdBy.id = :userId', { userId });
-
+  
     if (status) queryBuilder.andWhere('task.status = :status', { status });
     if (priority) queryBuilder.andWhere('task.priority = :priority', { priority });
     if (tags && tags.length > 0) queryBuilder.andWhere('task.tags && ARRAY[:...tags]', { tags });
-
+  
     queryBuilder.skip(offset).take(limit);
-
+  
     try {
       const [tasks, total] = await queryBuilder.getManyAndCount();
       const formattedTasks = tasks.map(task => this.formatTaskResponse(task));
@@ -82,17 +71,15 @@ export class TasksService {
         page,
         limit,
       });
-
-      // Cache the response with an expiry (e.g., 5 minutes)
-      await this.cacheManager.set(cacheKey, response, 300);
-
-      return { tasks, total };
-
+  
+      // Add return statement here
+      return response;
     } catch (error) {
       console.error('Error fetching paginated tasks:', error);
       throw new CustomHttpException(SYS_MSG.GENERAL_ERROR_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+  
 
 
   async findOne(id: string) {
@@ -160,7 +147,6 @@ export class TasksService {
     } catch (error) {
       throw new CustomHttpException('Failed to share the task', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-  
+  } 
   
 }
