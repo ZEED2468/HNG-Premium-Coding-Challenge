@@ -8,7 +8,7 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log', 'debug'],
   });
   app.enableCors();
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api/v1');
   const port = process.env.PORT;
 
   app.useGlobalPipes(new ValidationPipe({
@@ -29,7 +29,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api/v1/docs', app, document);
 
   await app.listen(port);
   console.log(`Task Management API is listening on prt ${port}`);

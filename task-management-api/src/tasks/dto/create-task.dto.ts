@@ -1,7 +1,19 @@
-import { IsString, IsDate, IsOptional, MinLength, IsNotEmpty} from 'class-validator';
+import { IsString, IsDate, IsOptional, MinLength, IsNotEmpty, IsEnum, IsArray} from 'class-validator';
 import { IsFutureDate } from "../../shared/filters/date.decorator"
 import { ApiProperty } from '@nestjs/swagger';
 
+export enum TaskStatus {
+    PENDING = 'pending',
+    IN_PROGRESS = 'in-progress',
+    COMPLETED = 'completed',
+  }
+  
+  export enum TaskPriority {
+    LOW = 'low',
+    MEDIUM = 'medium',
+    HIGH = 'high',
+  }
+  
 export class CreateTaskDto {
     @ApiProperty({ description: 'The title of the task', example: 'Finish project report' })
     @IsString({ message: 'Task title must be a string' })
@@ -19,16 +31,16 @@ export class CreateTaskDto {
     @IsFutureDate({ message: 'Due date must be in the future' }) 
     dueDate: Date;
 
-    @ApiProperty({ description: 'Status of the task', example: 'pending', enum: ['pending', 'in-progress', 'completed'], default: 'pending' })
+    @ApiProperty({ description: 'Status of the task', example: 'pending', enum: TaskStatus, default: TaskStatus.PENDING })
     @IsOptional()
-    @IsString({ message: 'Status must be a string' })
-    status?: string;
-
-    @ApiProperty({ description: 'Priority level of the task', example: 'medium', enum: ['low', 'medium', 'high'], default: 'medium' })
+    @IsEnum(TaskStatus, { message: 'Status must be "pending", "in-progress", or "completed"' })
+    status?: TaskStatus;
+    
+    @ApiProperty({ description: 'Priority level of the task', example: 'medium', enum: TaskPriority, default: TaskPriority.MEDIUM })
     @IsOptional()
-    @IsString({ message: 'Priority must be a string' })
-    priority?: string;
-
+    @IsEnum(TaskPriority, { message: 'Priority must be "low", "medium", or "high"' })
+    priority?: TaskPriority;
+    
     @ApiProperty({ description: 'User the task is assigned to', example: 'janedoe@example.com', required: false })
     @IsOptional()
     @IsString({ message: 'AssignedTo must be a valid string' })
@@ -36,6 +48,7 @@ export class CreateTaskDto {
   
     @ApiProperty({ description: 'Tags for the task', example: ['finance', 'quarterly'], required: false })
     @IsOptional()
-    @IsString({ each: true, message: 'Each tag must be a string' })
+    @IsArray()
+    @IsString({ each: true, message: 'Each tag must be a non-empty string' })
     tags?: string[];
 }

@@ -20,20 +20,29 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
+    /**
+   * Register a new user.
+   * This method validates if the email or username is already in use,
+   * hashes the password, saves the user in the database, and returns a JWT token.
+   */
   async register(createUserDto: CreateUserDto): Promise<AuthResponseDto> {
     const { email, username } = createUserDto;
 
+    // Check if a user with the provided email or username already exists
     const existingUser = await this.userRepository.findOne({ where: [{ email }, { username }] });
     if (existingUser) {
       throw new CustomHttpException(SYS_MSG.USER_ACCOUNT_EXIST, HttpStatus.BAD_REQUEST);
     }
-
+    // Hash the user's password before saving it to the database
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    // Create a new user object with the hashed password
     const user = this.userRepository.create({ ...createUserDto, password: hashedPassword });
 
     try {
+      // Save the user to the database
       const savedUser = await this.userRepository.save(user);
-      const payload = { email: savedUser.email, sub: savedUser.id };
+      // Generate a JWT token for the user
+      const payload = { email: savedUser.email, sub: savedUser.id }; // Payload includes user email and ID
       const accessToken = this.jwtService.sign(payload);
 
       return {
@@ -46,15 +55,19 @@ export class UsersService {
             throw new CustomHttpException(SYS_MSG.FAILED_TO_CREATE_USER, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+      /**
+   * Authenticate a user and generate a JWT token.
+   * This method verifies the user's email and password, and if valid, returns a JWT token.
+   */
     async login(loginUserDto: LoginUserDto): Promise<AuthResponseDto> {
         const { email, password } = loginUserDto;
+        // Find the user by email
         const user = await this.userRepository.findOne({ where: { email } });
 
         if (!user) {
             throw new CustomHttpException(SYS_MSG.USER_ACCOUNT_DOES_NOT_EXIST, HttpStatus.UNAUTHORIZED);
         }
-
+        // Verify the provided password matches the stored hashed password
         const passwordValid = await bcrypt.compare(password, user.password);
         if (!passwordValid) {
             throw new CustomHttpException(SYS_MSG.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED);

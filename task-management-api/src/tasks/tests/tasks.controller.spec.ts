@@ -8,6 +8,7 @@ import { ShareTaskDto } from '../dto/share-task.dto';
 import { UpdateTaskDto } from '../dto/update-task.dto';
 import { HttpStatus } from '@nestjs/common';
 import { AuthenticatedRequest } from '../../users/types/express-request.interface';
+import { TaskPriority } from '../dto/get-tasks-query.dto'
 import * as SYS_MSG from '../../shared/constants/system-messages';
 
 describe('TasksController', () => {
@@ -78,7 +79,7 @@ describe('TasksController', () => {
         title: 'New Task',
         description: 'Task Description',
         dueDate: new Date('2024-12-31'),
-        priority: 'medium',
+        priority: TaskPriority.MEDIUM,
       };
       const createdTask: Task = {
         ...taskDto,

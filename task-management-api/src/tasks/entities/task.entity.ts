@@ -18,10 +18,10 @@ export class Task extends BaseEntity {
   dueDate: Date;
 
   @Column({ default: 'pending' })
-  status: string;
+  status: 'pending' | 'in-progress' | 'completed';
 
   @Column({ default: 'low' })
-  priority: string;
+  priority: 'low' | 'medium' | 'high';
 
   @ManyToOne(() => User, (user) => user.tasks, { eager: true })
   @JoinColumn({ name: 'createdById' })

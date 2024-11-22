@@ -21,18 +21,16 @@ export class TasksController {
   @ApiResponse({ status: 400, description: 'Invalid input.' })
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createTaskDto: CreateTaskDto, @Req() req: AuthenticatedRequest) {
-    const userId = req.user?.userId;
+    const userId = req.user?.userId; // Get the user ID from the authenticated request
     return this.tasksService.create(createTaskDto, userId);
   }
 
   @Get()
   @ApiOperation({ summary: 'Retrieve all tasks with pagination and filtering' })
   @ApiResponse({ status: 200, description: 'List of all tasks.' })
-  async findAll(
-    @Req() req: AuthenticatedRequest,
-    @Query() query: GetTasksQueryDto,
+  async findAll( @Req() req: AuthenticatedRequest, @Query() query: GetTasksQueryDto,
   ) {
-    const userId = req.user?.userId;
+    const userId = req.user?.userId; // Get the user ID from the authenticated request
     return this.tasksService.findAllTasks(userId, query);
   }
 
@@ -49,7 +47,7 @@ export class TasksController {
   @ApiResponse({ status: 200, description: 'Task has been updated.' })
   @ApiResponse({ status: 404, description: 'Task not found.' })
   async update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto, @Req() req: AuthenticatedRequest) {
-    const userId = req.user?.userId;
+    const userId = req.user?.userId; // Get the user ID from the authenticated request
     return this.tasksService.update(id, updateTaskDto, userId);
   }
 
@@ -57,23 +55,18 @@ export class TasksController {
   @ApiOperation({ summary: 'Delete a task by ID' })
   @ApiResponse({ status: 204, description: 'Task has been deleted.' })
   @ApiResponse({ status: 404, description: 'Task not found.' })
-  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
-    const userId = req.user?.userId;
+    const userId = req.user?.userId; // Get the user ID from the authenticated request
     return this.tasksService.remove(id, userId);
   }
 
-  @Post(':id/share')
+  @Post('share/:id')
   @ApiOperation({ summary: 'Share a task via email' })
   @ApiResponse({ status: 200, description: 'Task has been shared successfully.' })
   @ApiResponse({ status: 404, description: 'Task not found.' })
-  async shareTask(
-    @Param('id') taskId: string,
-    @Body() shareTaskDto: ShareTaskDto,
-    @Req() req: AuthenticatedRequest,
+  async shareTask( @Param('id') taskId: string,  @Body() shareTaskDto: ShareTaskDto, @Req() req: AuthenticatedRequest,
   ) {
-    const userId = req.user?.userId;
+    const userId = req.user?.userId; // Get the user ID from the authenticated request
     return this.tasksService.shareTask(taskId, shareTaskDto, userId);
   }
-
 }

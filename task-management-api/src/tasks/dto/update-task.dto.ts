@@ -1,6 +1,19 @@
-import { IsString, IsDate, IsOptional, MinLength } from 'class-validator';
+import { IsString, IsDate, IsOptional, MinLength, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsFutureDate } from "../../shared/filters/date.decorator";
+
+
+export enum TaskStatus {
+  PENDING = 'pending',
+  IN_PROGRESS = 'in-progress',
+  COMPLETED = 'completed',
+}
+
+export enum TaskPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+}
 
 export class UpdateTaskDto {
   @ApiProperty({ description: 'The title of the task', example: 'Update project details', required: false })
@@ -22,13 +35,13 @@ export class UpdateTaskDto {
 
   @ApiProperty({ description: 'Status of the task', example: 'in-progress', enum: ['pending', 'in-progress', 'completed'], required: false })
   @IsOptional()
-  @IsString({ message: 'Status must be a string' })
-  status?: string;
+  @IsEnum(TaskStatus, { message: 'Status must be "pending", "in-progress", or "completed"' })
+  status?: TaskStatus;
 
   @ApiProperty({ description: 'Priority level of the task', example: 'high', enum: ['low', 'medium', 'high'], required: false })
   @IsOptional()
-  @IsString({ message: 'Priority must be a string' })
-  priority?: string;
+  @IsEnum(TaskPriority, { message: 'Priority must be "low", "medium", or "high"' })
+  priority?: TaskPriority;
 
   @ApiProperty({ description: 'User the task is assigned to', example: 'janedoe@example.com', required: false })
   @IsOptional()
