@@ -23,6 +23,7 @@ The Task Management API is a scalable RESTful API that enables users to manage t
 
 ### Prerequisites
 
+- **Typescript**
 - **Node.js** (v14 or higher)
 - **PostgreSQL** database
 - **Git** (for cloning the repository)
